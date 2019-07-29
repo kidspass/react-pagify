@@ -211,6 +211,7 @@ var Button = function (_React$Component3) {
     key: 'render',
     value: function render() {
       var context = this.context;
+      var segments = context.segments;
 
       var _props3 = this.props,
           page = _props3.page,
@@ -222,12 +223,44 @@ var Button = function (_React$Component3) {
       var Tag = tags.segment.tag;
       var Link = tags.link.tag;
 
+      var containsUrls = false;
+      var urls = {};
+      if (Link === 'a' && segments.pageNumberToURLs) {
+        containsUrls = true;
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = Object.entries(segments.pageNumberToURLs)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var _step2$value = _slicedToArray(_step2.value, 2),
+                key = _step2$value[0],
+                value = _step2$value[1];
+
+            urls[key] = { href: value };
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+      }
+
       return _react2.default.createElement(
         Tag,
         _extends({}, tags.segment.props, props),
         _react2.default.createElement(
           Link,
-          _extends({}, tags.link.props, {
+          _extends({}, containsUrls ? urls[page] : _extends({}, tags.link.props), {
             onClick: function onClick(e) {
               return onSelect(page, e);
             } }),
@@ -246,6 +279,7 @@ Button.propTypes = {
 };
 Button.contextTypes = {
   onSelect: _propTypes2.default.func,
+  segments: _propTypes2.default.object,
   tags: _propTypes2.default.object
 };
 

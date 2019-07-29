@@ -93,15 +93,25 @@ Segment.contextTypes = {
 class Button extends React.Component {
   render() {
     const context = this.context;
+    const segments = context.segments;
     const { page, children, ...props } = this.props;
     const onSelect = context.onSelect;
     const tags = context.tags;
     const Tag = tags.segment.tag;
     const Link = tags.link.tag;
 
+    let containsUrls = false;
+    let urls = {};
+    if (Link === 'a' && segments.pageNumberToURLs) {
+      containsUrls = true;
+      for (let [key, value] of Object.entries(segments.pageNumberToURLs)) {
+        urls[key]= { href: value};
+      }
+    }
+
     return (<Tag {...tags.segment.props} {...props}>
       <Link
-        {...tags.link.props}
+        { ...containsUrls ? urls[page] : {...tags.link.props } }
         onClick={(e) => onSelect(page, e)}>{children}</Link>
     </Tag>);
   }
@@ -112,6 +122,7 @@ Button.propTypes = {
 };
 Button.contextTypes = {
   onSelect: PropTypes.func,
+  segments: PropTypes.object,
   tags: PropTypes.object
 };
 
